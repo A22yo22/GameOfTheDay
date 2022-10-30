@@ -27,9 +27,13 @@ public class PlayerGolfTest : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetMouseButtonDown(0))
+        {
+            //shotRadius.SetActive(true);
+        }
+
         RaycastHit hit;
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        
         
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
         {
@@ -41,7 +45,6 @@ public class PlayerGolfTest : MonoBehaviour
                 if(Input.GetMouseButtonDown(0))
                 {
                     playerCamFollowBox.gameObject.SetActive(true);
-                    shotRadius.SetActive(true);
                     
                 }
 
@@ -57,22 +60,34 @@ public class PlayerGolfTest : MonoBehaviour
                 if(Input.GetMouseButtonDown(0))
                 {
                     playerCamFollowBox.gameObject.SetActive(true);
-                    shotRadius.SetActive(true);
                     
                 }
 
                 if(Input.GetMouseButtonUp(0))
                 {
                     rb.AddForce(new Vector3(playerCamFollowBox.position.x - hit.point.x, 0, playerCamFollowBox.position.z - hit.point.z).normalized * force, ForceMode.Impulse);
-                    playerCamFollowBox.gameObject.SetActive(true);
+                    playerCamFollowBox.gameObject.SetActive(false);
                     shotRadius.SetActive(false);
                 }
             }
         }
 
-        if(rb.velocity.x <= minVelocety && rb.velocity.z <= minVelocety)
+        if(rb.velocity.x < minVelocety && rb.velocity.x >= -minVelocety)
         {
-            //playerCamFollowBox.gameObject.SetActive(false);
+            if(rb.velocity.z < minVelocety && rb.velocity.z >= -minVelocety)
+            {
+                Debug.Log(rb.velocity.z);
+
+                shotRadius.SetActive(true);
+            }
+            else
+            {
+                shotRadius.SetActive(false);
+            }
+        }
+        else
+        {
+            shotRadius.SetActive(false);
         }
     }
 
@@ -80,4 +95,4 @@ public class PlayerGolfTest : MonoBehaviour
     {
         force = Mathf.Lerp(0, maxForce, Mathf.InverseLerp(0, maxShotDistance, Vector3.Distance(transform.position, hit2.point)));
     }
-}
+} 
