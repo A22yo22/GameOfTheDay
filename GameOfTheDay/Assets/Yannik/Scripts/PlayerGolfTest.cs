@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerGolfTest : MonoBehaviour
 {
     public float force;
+    public float maxForce = 30;
+    public bool isPressed;         
 
     public bool canShot;
     public float maxShotDistance;
@@ -12,6 +14,7 @@ public class PlayerGolfTest : MonoBehaviour
 
     public LayerMask groundLayer;
     public Transform playerCamFollowBox;
+    public GameObject shotRadius;
     public Camera cam;
 
 
@@ -24,56 +27,57 @@ public class PlayerGolfTest : MonoBehaviour
 
     void Update()
     {
-        if(canShot)
+        RaycastHit hit;
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        
+        
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
         {
-            RaycastHit hit;
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            
-            
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
+            if(Vector3.Distance(transform.position, hit.point)  <= maxShotDistance)
             {
-                if(Vector3.Distance(transform.position, hit.point)  <= maxShotDistance)
+                CalculateForce(hit);
+                playerCamFollowBox.position = hit.point;
+
+                if(Input.GetMouseButtonDown(0))
                 {
                     playerCamFollowBox.gameObject.SetActive(true);
-
-                    CalculateForce(hit);
-                    playerCamFollowBox.position = hit.point;
-
-                    if(Input.GetMouseButtonDown(0))
-                    {
-                        rb.AddForce((transform.position - hit.point).normalized * force, ForceMode.Impulse);
-                    }
+                    shotRadius.SetActive(true);
+                    
                 }
-                else
+
+                if(Input.GetMouseButtonUp(0))
                 {
-                    playerCamFollowBox.gameObject.SetActive(false);
+                    rb.AddForce(new Vector3(transform.position.x - hit.point.x, 0, transform.position.z - hit.point.z).normalized * force, ForceMode.Impulse);
+                    playerCamFollowBox.gameObject.SetActive(true);
+                    shotRadius.SetActive(false);
+                }
+            }
+            else
+            {
+                if(Input.GetMouseButtonDown(0))
+                {
+                    playerCamFollowBox.gameObject.SetActive(true);
+                    shotRadius.SetActive(true);
+                    
+                }
+
+                if(Input.GetMouseButtonUp(0))
+                {
+                    rb.AddForce(new Vector3(playerCamFollowBox.position.x - hit.point.x, 0, playerCamFollowBox.position.z - hit.point.z).normalized * force, ForceMode.Impulse);
+                    playerCamFollowBox.gameObject.SetActive(true);
+                    shotRadius.SetActive(false);
                 }
             }
         }
-        else
+
+        if(rb.velocity.x <= minVelocety && rb.velocity.z <= minVelocety)
         {
-            CalculateSpeed();
+            //playerCamFollowBox.gameObject.SetActive(false);
         }
-        
     }
 
     public void CalculateForce(RaycastHit hit2)
     {
-        force = Mathf.Lerp(0, 5, Mathf.InverseLerp(0, maxShotDistance, Vector3.Distance(transform.position, hit2.point)));
-    }
-
-    public void CalculateSpeed()
-    {
-        if(rb.velocity.x <= minVelocety && rb.velocity.y <= minVelocety && rb.velocity.z <= minVelocety)
-        {
-            rb.velocity = Vector3.zero;
-            canShot = true;
-            playerCamFollowBox.gameObject.SetActive(true);
-        }
-        else
-        {
-            canShot = false;
-            playerCamFollowBox.gameObject.SetActive(false);
-        }
+        force = Mathf.Lerp(0, maxForce, Mathf.InverseLerp(0, maxShotDistance, Vector3.Distance(transform.position, hit2.point)));
     }
 }
