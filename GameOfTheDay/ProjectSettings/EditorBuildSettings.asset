@@ -9,6 +9,15 @@ EditorBuildSettings:
     path: 
     guid: 00000000000000000000000000000000
   - enabled: 1
+    path: Assets/Rayan/Scene/Menu.unity
+    guid: 571ce36b12a743548b5c7f0e35dd15c8
+  - enabled: 1
+    path: Assets/Rayan/Scene/Level_1.unity
+    guid: 952f8b4998f1afb42b01c0b021872fff
+  - enabled: 1
+    path: Assets/Rayan/Scene/Level_2.unity
+    guid: 629d00aa35ec6a64485325f41bb3b42b
+  - enabled: 1
     path: Assets/Yannik/GameMechanics.unity
     guid: ddf4c9ca3958dfb438196db0f67213aa
   m_configObjects: {}

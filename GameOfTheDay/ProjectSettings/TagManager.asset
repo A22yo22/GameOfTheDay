@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Win
+  - Win_UI
+  - Player_Cam
+  - Win_Cam
   layers:
   - Default
   - TransparentFX
